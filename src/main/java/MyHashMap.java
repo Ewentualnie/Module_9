@@ -2,14 +2,24 @@ import java.util.Objects;
 
 public class MyHashMap<Key, Value> {
     private Node<Key, Value>[] hashTable;
-    int size = 0;
+    private int size = 0;
+    private float hold;
 
     public MyHashMap() {
+        hashTable = new Node[16];
+        hold = hashTable.length * 0.75f;
+    }
 
+    public int hash(Key key) {
+        int result = 31;
+        result = 17 * result + Objects.hashCode(key);
+        return result % hashTable.length;
     }
 
     public void put(Key key, Value value) {
-
+        Node<Key, Value> node = new Node<>(null, key, value);
+        int index = node.hash(hashTable.length);
+        size++;
     }
 
     public void remove(Key key) {
@@ -37,7 +47,7 @@ public class MyHashMap<Key, Value> {
         public Node<K, V> next;
         public K key;
         public V value;
-        public int hash;
+        private final int hash;
 
         public Node(Node<K, V> next, K key, V value) {
             this.next = next;
@@ -56,7 +66,13 @@ public class MyHashMap<Key, Value> {
 
         @Override
         public int hashCode() {
-            return Objects.hash(next, key, value);
+            int result = 31;
+            result = 17 * result + Objects.hashCode(key);
+            return result;
+        }
+
+        public int hash(int length) {
+            return hash % length;
         }
     }
 }
