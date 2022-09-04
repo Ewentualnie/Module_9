@@ -1,48 +1,62 @@
 import java.util.Objects;
 
 public class MyHashMap<Key, Value> {
-    Node<Key, Value> head;
+    private Node<Key, Value>[] hashTable;
     int size = 0;
 
     public MyHashMap() {
-        head = new Node<>(null, null, null);
+
     }
 
     public void put(Key key, Value value) {
-        Node<Key,Value> current = new Node<>(null,key,value);
-        head.next = current;
-        size++;
-        Node<Key, Value> next = head;
 
     }
 
     public void remove(Key key) {
-        видаляє пару по ключу
+        //видаляє пару по ключу
     }
 
     public void clear() {
-        очищає колекцію
+        //очищає колекцію
     }
 
     public int size() {
-        повертає розмір колекції
+        return size;
     }
 
     public Value get(Key key) {
-        повертає значення (Object value) по ключу
+        return null;
+        //повертає значення (Object value)по ключу
     }
-private Node<Key,Value> getNode () {
 
-}
+    private Node<Key, Value> getNode() {
+        return null;
+    }
+
     private static class Node<K, V> {
         public Node<K, V> next;
         public K key;
         public V value;
+        public int hash;
 
         public Node(Node<K, V> next, K key, V value) {
             this.next = next;
             this.key = key;
             this.value = value;
+            hash = hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node<?, ?> node = (Node<?, ?>) o;
+            return next.equals(node.next) && key.equals(node.key) && value.equals(node.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(next, key, value);
         }
     }
 }
