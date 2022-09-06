@@ -4,21 +4,18 @@ import java.util.Objects;
 public class MyHashMap<K, V> {
     private Node<K, V>[] hashTable;
     private int size = 0;
-    private float hold;
 
     public MyHashMap() {
         hashTable = new Node[16];
-        hold = hashTable.length * 0.75f;
     }
 
     public int hash(K key) {
-        return (31 * 17 + Objects.hashCode(key)) % hashTable.length;
+        return Math.abs((31 * 17 + Objects.hashCode(key)) % hashTable.length);
     }
 
     public void put(K key, V value) {
         Node<K, V> node = new Node<>(null, key, value);
         int index = node.hash(hashTable.length);
-        System.out.println(index);
 
         if (hashTable[index] == null) {
             hashTable[index] = node;
@@ -38,6 +35,16 @@ public class MyHashMap<K, V> {
     }
 
     public void remove(K key) {
+        int index = hash(key);
+        Node<K, V> oldNode = hashTable[index];
+        Node<K, V> current = null;
+        if (oldNode != null) {
+            while (!oldNode.key.equals(key)) {
+                current = oldNode;
+                oldNode = oldNode.next;
+            }
+        }
+        System.out.println("current: " + current.value + "    old:" + oldNode.value);
         //видаляє пару по ключу
     }
 
@@ -51,18 +58,18 @@ public class MyHashMap<K, V> {
 
     public V get(K key) {
         int index = hash(key);
-        System.out.println(index + " in get method");
         Node<K, V> oldNode = hashTable[index];
         if (oldNode != null) {
-            while (oldNode.key != key) {
+            while (!oldNode.key.equals(key)) {
                 oldNode = oldNode.next;
-                if (oldNode == null) {
-                    throw new RuntimeException("No element with key '" + key + "'");
+                if (oldNode != null) {
+                    continue;
                 }
+                throw new RuntimeException("No element with key '" + key + "'");
             }
             return oldNode.value;
         }
-        return null;
+        throw new RuntimeException("No element with key '" + key + "'");
     }
 
     private Node<K, V> getNode() {
@@ -74,9 +81,13 @@ public class MyHashMap<K, V> {
 
     @Override
     public String toString() {
-        return "MyHashMap{" +
-                "hashTable=" + Arrays.toString(hashTable) +
-                '}';
+        StringBuilder res = new StringBuilder("MyHashMap {");
+        for (Node node : hashTable) {
+            if (node != null) {
+                res.append(node).append("\n");
+            }
+        }
+        return res.toString();
     }
 
     private static class Node<Key, Value> {
@@ -94,7 +105,16 @@ public class MyHashMap<K, V> {
 
         @Override
         public String toString() {
-            return "Node {" + key + ':' + value + '}' + (next != null ? "+++" : "-");
+            StringBuilder res = new StringBuilder("");
+            res.append("{").append("key: ").append(key).append(" value: ").append(value).append(";");
+            if (next != null) {
+                while (next != null) {
+                    res.append("\n").append("key: ").append(next.key).append(" value: ").append(next.value).append(";");
+                    next = next.next;
+                }
+            }
+            res.deleteCharAt(res.length() - 1).append("}");
+            return res.toString();
         }
 
         @Override
@@ -111,7 +131,7 @@ public class MyHashMap<K, V> {
         }
 
         public int hash(int length) {
-            return hash % length;
+            return Math.abs(hash % length);
         }
     }
 }
