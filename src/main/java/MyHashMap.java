@@ -65,7 +65,7 @@ public class MyHashMap<K, V> {
 
     public void clear() {
         hashTable = new Node[16];
-        size=0;
+        size = 0;
     }
 
     public int size() {
@@ -86,17 +86,22 @@ public class MyHashMap<K, V> {
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("MyHashMap {");
-        for (int i = 0; i < hashTable.length; i++) {
-            Node<K, V> node = hashTable[i];
+        StringBuilder res = new StringBuilder("{");
+        for (Node<K, V> node : hashTable) {
+            StringBuilder subRes = new StringBuilder();
+            subRes.append(node != null ? node : "");
             if (node != null) {
-                res.append(node);
-                if (i != hashTable.length - 1) {
-                    res.append(", ").append("\n");
-                }
+                subRes.append(", ");
             }
+            while (node != null && node.next != null) {
+                node = node.next;
+                subRes.append(node);
+                subRes.append(", ");
+            }
+            res.append(subRes);
+
         }
-        return res.toString();
+        return res.substring(0, res.length() - 2) + "}";
     }
 
     private static class Node<Key, Value> {
@@ -114,21 +119,7 @@ public class MyHashMap<K, V> {
 
         @Override
         public String toString() {
-            StringBuilder res = new StringBuilder();
-            res.append("Node {").append("key: ").append(key).append(" value: ").append(value).append("}");
-            Node<Key, Value> newNode = next;
-            if (newNode != null) {
-                while (newNode != null) {
-                    res
-                            .append(" Node {key: ")
-                            .append(newNode.key)
-                            .append(" value: ")
-                            .append(newNode.value)
-                            .append("}");
-                    newNode = newNode.next;
-                }
-            }
-            return res.toString();
+            return key + "=" + value;
         }
 
         @Override
