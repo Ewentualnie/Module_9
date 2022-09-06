@@ -9,7 +9,7 @@ public class MyArrayList<T> implements MyCollection<T> {
 
     @Override
     public void add(T object) {
-        if (size <= data.length - 1) {
+        if (size >= data.length - 1) {
             increaseSize();
         }
         data[size++] = object;
@@ -43,13 +43,23 @@ public class MyArrayList<T> implements MyCollection<T> {
 
     private void increaseSize() {
         T[] temp = data;
-        int newSize = temp.length +
-                (int) Math.ceil(size / 2.) != 0 ?
+        int newSize = (int) Math.ceil(size / 2.) != 0 ?
                 (int) Math.ceil(size / 2.) :
                 1;
-
-        data = (T[]) new Object[newSize];
+        data = (T[]) new Object[newSize + temp.length];
         System.arraycopy(temp, 0, data, 0, temp.length);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            result.append((i < size - 1) ?
+                    data[i] + ", " :
+                    data[i]);
+        }
+        result.insert(0, "[").append("]");
+        return result.toString();
     }
 
     private void checkIndex(int index) {

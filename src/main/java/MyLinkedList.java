@@ -9,10 +9,24 @@ public class MyLinkedList<T> implements MyCollection<T> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        Node<T> cell = head.next;
+        for (int i = 0; i < size; i++) {
+            result.append((i < size - 1) ?
+                    cell.data + ", " :
+                    cell.data);
+            cell = cell.next;
+        }
+        result.insert(0, "[").append("]");
+        return result.toString();
+    }
+
+    @Override
     public void add(T object) {
         Node<T> previous = tail;
         previous.data = object;
-        tail = new Node<>(null, previous, null);
+        tail = new Node<>(previous, null, null);
         previous.next = tail;
         size++;
     }
@@ -75,5 +89,4 @@ public class MyLinkedList<T> implements MyCollection<T> {
             this.data = data;
         }
     }
-
 }
