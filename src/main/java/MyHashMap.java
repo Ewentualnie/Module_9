@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Objects;
 
 public class MyHashMap<K, V> {
@@ -19,37 +18,54 @@ public class MyHashMap<K, V> {
 
         if (hashTable[index] == null) {
             hashTable[index] = node;
+            size++;
         } else {
-            addLastNode(index, node);
+            addNode(index, node);
         }
-        size++;
-
     }
 
-    private void addLastNode(int index, Node<K, V> node) {
-        Node<K, V> oldNode = hashTable[index];
-        while (oldNode.next != null) {
-            oldNode = oldNode.next;
+    private void addNode(int index, Node<K, V> newNode) {
+        Node<K, V> node = hashTable[index];
+        while (node.next != null) {
+            if (changeNodeValue(node, newNode)) {
+                return;
+            }
+            node = node.next;
         }
-        oldNode.next = node;
+        if (!changeNodeValue(node, newNode)) {
+            node.next = newNode;
+            size++;
+        }
+    }
+
+    private boolean changeNodeValue(Node<K, V> node, Node<K, V> newNode) {
+        if (node.hashCode() == newNode.hashCode()) {
+            node.value = newNode.value;
+            return true;
+        }
+        return false;
     }
 
     public void remove(K key) {
         int index = hash(key);
         Node<K, V> oldNode = hashTable[index];
-        Node<K, V> current = null;
-        if (oldNode != null) {
-            while (!oldNode.key.equals(key)) {
+        Node<K, V> current = oldNode;
+        if (oldNode != null && oldNode.key.equals(key)) {
+            hashTable[index] = null;
+            size--;
+        } else if (oldNode != null) {
+            while (!oldNode.key.equals(key) && oldNode.next != null) {
                 current = oldNode;
                 oldNode = oldNode.next;
             }
+            current.next = oldNode.next != null ? oldNode.next : null;
+            size--;
         }
-        System.out.println("current: " + current.value + "    old:" + oldNode.value);
-        //видаляє пару по ключу
     }
 
     public void clear() {
         hashTable = new Node[16];
+        size=0;
     }
 
     public int size() {
@@ -62,19 +78,8 @@ public class MyHashMap<K, V> {
         if (oldNode != null) {
             while (!oldNode.key.equals(key)) {
                 oldNode = oldNode.next;
-                if (oldNode != null) {
-                    continue;
-                }
-                throw new RuntimeException("No element with key '" + key + "'");
             }
             return oldNode.value;
-        }
-        throw new RuntimeException("No element with key '" + key + "'");
-    }
-
-    private Node<K, V> getNode() {
-        for (Node<K, V> node : hashTable) {
-
         }
         return null;
     }
@@ -82,9 +87,13 @@ public class MyHashMap<K, V> {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder("MyHashMap {");
-        for (Node node : hashTable) {
+        for (int i = 0; i < hashTable.length; i++) {
+            Node<K, V> node = hashTable[i];
             if (node != null) {
-                res.append(node).append("\n");
+                res.append(node);
+                if (i != hashTable.length - 1) {
+                    res.append(", ").append("\n");
+                }
             }
         }
         return res.toString();
@@ -105,15 +114,20 @@ public class MyHashMap<K, V> {
 
         @Override
         public String toString() {
-            StringBuilder res = new StringBuilder("");
-            res.append("{").append("key: ").append(key).append(" value: ").append(value).append(";");
-            if (next != null) {
-                while (next != null) {
-                    res.append("\n").append("key: ").append(next.key).append(" value: ").append(next.value).append(";");
-                    next = next.next;
+            StringBuilder res = new StringBuilder();
+            res.append("Node {").append("key: ").append(key).append(" value: ").append(value).append("}");
+            Node<Key, Value> newNode = next;
+            if (newNode != null) {
+                while (newNode != null) {
+                    res
+                            .append(" Node {key: ")
+                            .append(newNode.key)
+                            .append(" value: ")
+                            .append(newNode.value)
+                            .append("}");
+                    newNode = newNode.next;
                 }
             }
-            res.deleteCharAt(res.length() - 1).append("}");
             return res.toString();
         }
 
