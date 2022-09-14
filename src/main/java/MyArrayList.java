@@ -1,5 +1,6 @@
 public class MyArrayList<T> implements MyCollection<T> {
-    private final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 0;
+    private static final double EXPANSION_COEFFICIENT = 1.5;
     private T[] data;
     private int size = 0;
 
@@ -43,10 +44,11 @@ public class MyArrayList<T> implements MyCollection<T> {
 
     private void increaseSize() {
         T[] temp = data;
-        int newSize = (int) Math.ceil(size / 2.) != 0 ?
-                (int) Math.ceil(size / 2.) :
-                1;
-        data = (T[]) new Object[newSize + temp.length];
+        int newSize = (int) (temp.length * EXPANSION_COEFFICIENT);
+        if (newSize == temp.length) {
+            newSize += 1;
+        }
+        data = (T[]) new Object[newSize];
         System.arraycopy(temp, 0, data, 0, temp.length);
     }
 
@@ -64,7 +66,7 @@ public class MyArrayList<T> implements MyCollection<T> {
 
     private void checkIndex(int index) {
         if (index < 0 || index > size - 1) {
-            throw new RuntimeException("Index " + index + " out of bounds for length " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
         }
     }
 }
