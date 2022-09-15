@@ -52,7 +52,7 @@ public class MyHashMap<K, V> {
         int index = hash(key);
         Node<K, V> oldNode = hashTable[index];
         if (oldNode != null) {
-            while (!oldNode.key.equals(key)) {
+            while (oldNode.key != key) {
                 oldNode = oldNode.next;
             }
             return oldNode.value;
