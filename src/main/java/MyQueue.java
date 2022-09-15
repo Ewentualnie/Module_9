@@ -1,33 +1,96 @@
 public class MyQueue<T> {
-    private final MyLinkedList<T> base;
+    private Node<T> head;
+    int size;
 
     public MyQueue() {
-        base = new MyLinkedList<>();
+        head = null;
+        size = 0;
     }
 
     public void add(T object) {
-        base.add(object);
+        Node<T> node = new Node<>(null, null, object);
+        if (head == null) {
+            head = node;
+        } else {
+            Node<T> lastNode = getNode();
+            lastNode.next = node;
+            node.previous = lastNode;
+        }
+        size++;
     }
 
     public void remove(int index) {
-        base.remove(index);
+        checkIndex(index);
+        Node<T> current = getNode(index);
+        if (current.previous != null) {
+            current.previous.next = current.next;
+        }
+        if (current.next != null) {
+            current.next.previous = current.previous;
+        }
+        size--;
     }
 
     public void clear() {
-        base.clear();
+        head = null;
+        size = 0;
     }
 
     public int size() {
-        return base.size();
+        return size;
     }
 
     public T peek() {
-        return base.get(0);
+        return head.data;
     }
 
     public T poll() {
-        T object = base.get(0);
-        base.remove(0);
-        return object;
+        Node<T> node = head;
+        if (size > 1) {
+            head = head.next;
+            head.previous = null;
+        } else {
+            head = null;
+        }
+        size--;
+        return node.data;
+    }
+
+    private Node<T> getNode() {
+        if (head == null) {
+            return head;
+        } else {
+            Node<T> node = head;
+            while (node.next != null) {
+                node = node.next;
+            }
+            return node;
+        }
+    }
+
+    private Node<T> getNode(int index) {
+        Node<T> node = head;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
+        }
+        return node;
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
+        }
+    }
+
+    private static class Node<E> {
+        Node<E> previous;
+        Node<E> next;
+        E data;
+
+        public Node(Node<E> previous, Node<E> next, E data) {
+            this.previous = previous;
+            this.next = next;
+            this.data = data;
+        }
     }
 }
