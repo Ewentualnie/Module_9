@@ -56,6 +56,20 @@ public class MyQueue<T> {
         return node.data;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        Node<T> node = head;
+        for (int i = 0; i < size; i++) {
+            result.append((i < size - 1) ?
+                    node.data + ", " :
+                    node.data);
+            node = node.next;
+        }
+        result.insert(0, "[").append("]");
+        return result.toString();
+    }
+
     private Node<T> getNode() {
         if (head == null) {
             return head;
