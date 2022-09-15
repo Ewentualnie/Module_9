@@ -24,7 +24,6 @@ public class MyLinkedList<T> implements MyCollection<T> {
     @Override
     public void add(T object) {
         Node<T> node = new Node<>(null, null, object);
-        System.out.println(node.data);
         if (head == null) {
             head = node;
         } else {
