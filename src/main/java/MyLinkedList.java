@@ -1,22 +1,21 @@
 public class MyLinkedList<T> implements MyCollection<T> {
     private Node<T> head;
-    private Node<T> tail;
-    private int size = 0;
+    private int size;
 
     public MyLinkedList() {
-        tail = new Node<>(head, null, null);
-        head = new Node<>(null, tail, null);
+        head = null;
+        size = 0;
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        Node<T> cell = head.next;
+        Node<T> node = head;
         for (int i = 0; i < size; i++) {
             result.append((i < size - 1) ?
-                    cell.data + ", " :
-                    cell.data);
-            cell = cell.next;
+                    node.data + ", " :
+                    node.data);
+            node = node.next;
         }
         result.insert(0, "[").append("]");
         return result.toString();
@@ -24,10 +23,15 @@ public class MyLinkedList<T> implements MyCollection<T> {
 
     @Override
     public void add(T object) {
-        Node<T> previous = tail;
-        previous.data = object;
-        tail = new Node<>(previous, null, null);
-        previous.next = tail;
+        Node<T> node = new Node<>(null, null, object);
+        System.out.println(node.data);
+        if (head == null) {
+            head = node;
+        } else {
+            Node<T> lastNode = getNode();
+            lastNode.next = node;
+            node.previous = lastNode;
+        }
         size++;
     }
 
@@ -35,12 +39,10 @@ public class MyLinkedList<T> implements MyCollection<T> {
     public void remove(int index) {
         checkIndex(index);
         Node<T> current = getNode(index);
-        if (index == 0) {
-            head.next = current.next;
-        } else if (index == size) {
-            tail.previous = current.previous;
-        } else {
+        if (current.previous != null) {
             current.previous.next = current.next;
+        }
+        if (current.next != null) {
             current.next.previous = current.previous;
         }
         size--;
@@ -48,8 +50,7 @@ public class MyLinkedList<T> implements MyCollection<T> {
 
     @Override
     public void clear() {
-        head.next = tail;
-        tail.previous = head;
+        head = null;
         size = 0;
     }
 
@@ -64,8 +65,20 @@ public class MyLinkedList<T> implements MyCollection<T> {
         return getNode(index).data;
     }
 
+    private Node<T> getNode() {
+        if (head == null) {
+            return head;
+        } else {
+            Node<T> node = head;
+            while (node.next != null) {
+                node = node.next;
+            }
+            return node;
+        }
+    }
+
     private Node<T> getNode(int index) {
-        Node<T> node = head.next;
+        Node<T> node = head;
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
@@ -74,7 +87,7 @@ public class MyLinkedList<T> implements MyCollection<T> {
 
     private void checkIndex(int index) {
         if (index < 0 || index > size - 1) {
-            throw new RuntimeException("Index " + index + " out of bounds for length " + size);
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
         }
     }
 
