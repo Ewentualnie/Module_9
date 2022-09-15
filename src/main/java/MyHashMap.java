@@ -8,9 +8,6 @@ public class MyHashMap<K, V> {
         hashTable = new Node[16];
     }
 
-    public int hash(K key) {
-        return Math.abs((31 * 17 + Objects.hashCode(key)) % hashTable.length);
-    }
 
     public void put(K key, V value) {
         Node<K, V> node = new Node<>(null, key, value);
@@ -24,27 +21,6 @@ public class MyHashMap<K, V> {
         }
     }
 
-    private void addNode(int index, Node<K, V> newNode) {
-        Node<K, V> node = hashTable[index];
-        while (node.next != null) {
-            if (changeNodeValue(node, newNode)) {
-                return;
-            }
-            node = node.next;
-        }
-        if (!changeNodeValue(node, newNode)) {
-            node.next = newNode;
-            size++;
-        }
-    }
-
-    private boolean changeNodeValue(Node<K, V> node, Node<K, V> newNode) {
-        if (node.hashCode() == newNode.hashCode()) {
-            node.value = newNode.value;
-            return true;
-        }
-        return false;
-    }
 
     public void remove(K key) {
         int index = hash(key);
@@ -82,6 +58,32 @@ public class MyHashMap<K, V> {
             return oldNode.value;
         }
         return null;
+    }
+
+    private void addNode(int index, Node<K, V> newNode) {
+        Node<K, V> node = hashTable[index];
+        while (node.next != null) {
+            if (changeNodeValue(node, newNode)) {
+                return;
+            }
+            node = node.next;
+        }
+        if (!changeNodeValue(node, newNode)) {
+            node.next = newNode;
+            size++;
+        }
+    }
+
+    private boolean changeNodeValue(Node<K, V> node, Node<K, V> newNode) {
+        if (node.hashCode() == newNode.hashCode()) {
+            node.value = newNode.value;
+            return true;
+        }
+        return false;
+    }
+
+    private int hash(K key) {
+        return Math.abs((31 * 17 + Objects.hashCode(key)) % hashTable.length);
     }
 
     @Override
